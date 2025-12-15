@@ -6,11 +6,19 @@ import {
   type QueryResultRow,
 } from "pg";
 
+import { config as dotenvConfig } from "dotenv";
+
+dotenvConfig();
+
 export class DatabasePool {
   private pool: Pool;
 
   constructor(config: PoolConfig) {
     this.pool = new Pool(config);
+
+    this.pool.on("connect", () => {
+      console.log("Connected to database");
+    });
 
     this.pool.on("error", (err) => {
       console.error("Unexpected database error:", err);

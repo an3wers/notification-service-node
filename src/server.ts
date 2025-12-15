@@ -10,8 +10,8 @@ import { EmailsSqlRepository } from "./infrastructure/emails.sql.repository.ts";
 import { NodemailerProvider } from "./infrastructure/nodemailer-provider.ts";
 import { EmailsController } from "./presenters/emails.controller.ts";
 import { EmailsService } from "./application/emails.servise.ts";
-import { RabbitMQService } from "./infrastructure/queue/rabbitmq.service.ts";
-import { EmailConsumer } from "./infrastructure/queue/email-consumer.ts";
+// import { RabbitMQService } from "./infrastructure/queue/rabbitmq.service.ts";
+// import { EmailConsumer } from "./infrastructure/queue/email-consumer.ts";
 
 let db: DatabasePool;
 const app: Express = express();
@@ -28,10 +28,10 @@ try {
   app.use(express.urlencoded({ extended: true }));
 
   // db
-  db = new DatabasePool(createDatabaseConfig("emailservice"));
+  db = new DatabasePool(createDatabaseConfig());
 
   // health check
-  app.get("/api/health", (req, res) => {
+  app.get("/api/health", async (req, res) => {
     res.status(200).json({
       status: "OK",
       timestamp: new Date().toISOString(),
@@ -60,11 +60,11 @@ try {
   app.use(errorHandler);
 
   // RabbitMQ Consumer
-  const queueService = new RabbitMQService();
-  await queueService.connect();
+  // const queueService = new RabbitMQService();
+  // await queueService.connect();
 
-  const emailConsumer = new EmailConsumer(queueService, emailsService);
-  await emailConsumer.start();
+  // const emailConsumer = new EmailConsumer(queueService, emailsService);
+  // await emailConsumer.start();
 } catch (error) {
   console.error(error);
   throw error;
