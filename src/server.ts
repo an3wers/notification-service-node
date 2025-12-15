@@ -3,7 +3,8 @@ import cors from "cors";
 import { config } from "./config/env.ts";
 import { errorHandler } from "./presenters/middleware/error-handler.middleware.ts";
 
-import { createDatabaseConfig, DatabasePool } from "@shared/db-lib";
+import { createDatabaseConfig, DatabasePool } from "./libs/db-client.ts";
+
 import { EmailRouter } from "./infrastructure/email.routes.ts";
 import { EmailsSqlRepository } from "./infrastructure/emails.sql.repository.ts";
 import { NodemailerProvider } from "./infrastructure/nodemailer-provider.ts";
@@ -46,7 +47,7 @@ try {
   const emailsService = new EmailsService(emailsRepository, emailProvider);
   const emailsController = new EmailsController(emailsService);
 
-  app.use("/api/emails", new EmailRouter(emailsController).router);
+  app.use("/api/v1/emails", new EmailRouter(emailsController).router);
 
   // 404 handler
   app.use((req, res) => {

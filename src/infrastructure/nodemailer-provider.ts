@@ -16,13 +16,13 @@ export class NodemailerProvider implements EmailProvider {
   async send(email: EmailEntity): Promise<SendEmailResult> {
     try {
       const mailOptions = {
-        from: `an3wer.ru <${email.from}>`,
+        from: `${email.displayName} <${email.from}>`,
         to: email.to.join(", "),
         cc: email.cc?.join(", "),
         bcc: email.bcc?.join(", "),
         subject: email.subject,
         text: email.body,
-        html: email.html,
+        html: email.html || undefined,
         attachments: email.attachments?.map((att) => ({
           filename: att.originalName,
           path: att.path,

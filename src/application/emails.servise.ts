@@ -8,11 +8,12 @@ import type { EmailEntity } from "../domain/email.entity.ts";
 export interface SendEmailRequest {
   to: string[];
   subject: string;
+  displayName?: string;
   body: string;
   cc?: string[];
   bcc?: string[];
   html?: string;
-  attachments?: AttachmentEntity[];
+  attachments?: Omit<AttachmentEntity, "id" | "createdAt" | "emailId">[];
 }
 
 export class EmailsService {
@@ -28,10 +29,10 @@ export class EmailsService {
   }
 
   async sendEmail(request: SendEmailRequest): Promise<EmailEntity> {
-    // save email to database
     const savedEmail = await this.emailsRepository.save({
       from: config.smtp.from,
       to: request.to,
+      displayName: request.displayName || config.smtp.displayName,
       subject: request.subject,
       body: request.body,
       cc: request.cc,
@@ -42,7 +43,6 @@ export class EmailsService {
     });
 
     try {
-      // TODO: реализовать процесс через транзакцию
       // какая есть сейчас проблема, при проверке result.success если он true, то обновление статуса может упасть, но письмо отправлено
       // будут неконсистентные данные в базе
       const result = await this.emailProvider.send(savedEmail);
@@ -76,7 +76,7 @@ export class EmailsService {
     }
   }
 
-  async getEmailStatus(emailId: string): Promise<EmailEntity | null> {
+  async getEmailDetails(emailId: string): Promise<EmailEntity | null> {
     return this.emailsRepository.findById(emailId);
   }
   // TODO: getEmails() {}

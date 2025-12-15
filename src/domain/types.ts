@@ -1,10 +1,3 @@
-// export enum EmailStatus {
-//   PENDING = "pending",
-//   SENT = "sent",
-//   FAILED = "failed",
-//   QUEUED = "queued",
-// }
-
 export const EmailStatus = {
   PENDING: "PENDING",
   SENT: "SENT",

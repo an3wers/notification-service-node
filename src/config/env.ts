@@ -3,8 +3,8 @@ import { config as dotenvConfig } from "dotenv";
 dotenvConfig();
 
 export const config = {
-  origin: process.env.ORIGIN || "http://localhost",
-  port: Number(process.env.PORT) || 3011,
+  origin: process.env.ORIGIN || "*",
+  port: Number(process.env.PORT) || 3008,
   serviceDomain: process.env.SERVICE_DOMAIN || "",
   nodeEnv: process.env.NODE_ENV || "development",
   apiUrl:
@@ -21,6 +21,7 @@ export const config = {
       pass: process.env.SMTP_PASSWORD!,
     },
     from: process.env.SMTP_FROM || "noreply@example.com",
+    displayName: process.env.SMTP_FROM_DISPLAY_NAME || "Email Service",
   },
 
   rabbitmq: {
@@ -29,6 +30,8 @@ export const config = {
     exchange: "email.exchange",
     routingKey: "email.send",
   },
+
+  secretKey: process.env.SECRET_KEY || "",
 
   storage: {
     uploadDir: process.env.UPLOAD_DIR || "./uploads",

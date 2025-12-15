@@ -18,13 +18,10 @@ export class EmailRouter {
     this._router.post(
       "/",
       upload.array("files", 20),
-      this.emailsController.sendEmail.bind(this.emailsController),
+      this.emailsController.sendEmail,
     );
 
-    this._router.get(
-      "/:id",
-      this.emailsController.getEmailStatus.bind(this.emailsController),
-    );
+    this._router.get("/:id", this.emailsController.getEmailDetails);
 
     return this._router;
   }
