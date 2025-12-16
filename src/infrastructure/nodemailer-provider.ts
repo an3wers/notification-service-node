@@ -18,6 +18,10 @@ export class NodemailerProvider implements EmailProvider {
         user: config.smtp.auth.user,
         pass: config.smtp.auth.pass,
       },
+      tls: {
+        rejectUnauthorized: true,
+        minVersion: "TLSv1.2",
+      },
       connectionTimeout: config.smtp.connectionTimeout,
       greetingTimeout: config.smtp.greetingTimeout,
       socketTimeout: config.smtp.socketTimeout,
