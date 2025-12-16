@@ -22,6 +22,13 @@ export const config = {
     },
     from: process.env.SMTP_FROM || "noreply@example.com",
     displayName: process.env.SMTP_FROM_DISPLAY_NAME || "Email Service",
+    connectionTimeout: parseInt(
+      process.env.SMTP_CONNECTION_TIMEOUT || "30000",
+      10,
+    ),
+    greetingTimeout: parseInt(process.env.SMTP_GREETING_TIMEOUT || "20000", 10),
+    socketTimeout: parseInt(process.env.SMTP_SOCKET_TIMEOUT || "20000", 10),
+    dnsTimeout: parseInt(process.env.SMTP_DNS_TIMEOUT || "20000", 10),
   },
 
   rabbitmq: {

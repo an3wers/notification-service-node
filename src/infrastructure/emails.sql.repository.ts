@@ -1,5 +1,5 @@
 import { BaseRepository, type PoolClient } from "../libs/db-client.ts";
-import type { EmailsRepository } from "../application/interfaces/emails.repository.ts";
+import type { EmailsRepository } from "../application/interfaces/emails-repository.ts";
 import type { SaveEmailData } from "../application/types/save-email-data.ts";
 import { type EmailEntity } from "../domain/email.entity.ts";
 import type { UpdateEmailData } from "../application/types/update-email-data.ts";
@@ -45,7 +45,7 @@ export class EmailsSqlRepository
       const emailResult = await client.query<EmailRow>(
         `INSERT INTO "emails" (
                     "from", "to", "display_name", cc, bcc, subject, body, html, status, 
-                    "created_at", "updated_at",
+                    "created_at", "updated_at"
                 ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW(), NOW())
                 RETURNING *`,
         [
@@ -163,7 +163,7 @@ export class EmailsSqlRepository
     const attachmentsResult = await this.query<AttachmentRow>(
       `SELECT *
        FROM "attachments" 
-       WHERE "emailId" = $1`,
+       WHERE "email_id" = $1`,
       [data.id],
     );
 

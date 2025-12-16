@@ -9,7 +9,7 @@ import { EmailRouter } from "./infrastructure/email.routes.ts";
 import { EmailsSqlRepository } from "./infrastructure/emails.sql.repository.ts";
 import { NodemailerProvider } from "./infrastructure/nodemailer-provider.ts";
 import { EmailsController } from "./presenters/emails.controller.ts";
-import { EmailsService } from "./application/emails.servise.ts";
+import { EmailsService } from "./application/emails.service.ts";
 // import { RabbitMQService } from "./infrastructure/queue/rabbitmq.service.ts";
 // import { EmailConsumer } from "./infrastructure/queue/email-consumer.ts";
 

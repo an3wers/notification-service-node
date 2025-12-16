@@ -10,7 +10,20 @@ export class NodemailerProvider implements EmailProvider {
   private transporter: Transporter;
 
   constructor() {
-    this.transporter = nodemailer.createTransport(config.smtp);
+    this.transporter = nodemailer.createTransport({
+      host: config.smtp.host,
+      port: config.smtp.port,
+      secure: config.smtp.secure,
+      auth: {
+        user: config.smtp.auth.user,
+        pass: config.smtp.auth.pass,
+      },
+      connectionTimeout: config.smtp.connectionTimeout,
+      greetingTimeout: config.smtp.greetingTimeout,
+      socketTimeout: config.smtp.socketTimeout,
+      dnsTimeout: config.smtp.dnsTimeout,
+      ignoreTLS: !config.smtp.secure,
+    });
   }
 
   async send(email: EmailEntity): Promise<SendEmailResult> {

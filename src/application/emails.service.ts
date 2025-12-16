@@ -1,5 +1,5 @@
 import type { AttachmentEntity } from "../domain/attachment.entity.ts";
-import type { EmailsRepository } from "./interfaces/emails.repository.ts";
+import type { EmailsRepository } from "./interfaces/emails-repository.ts";
 import { config } from "../config/env.ts";
 import { EmailStatus } from "../domain/types.ts";
 import type { EmailProvider } from "./interfaces/email-provider.ts";
@@ -8,6 +8,7 @@ import type { EmailEntity } from "../domain/email.entity.ts";
 export interface SendEmailRequest {
   to: string[];
   subject: string;
+  from?: string;
   displayName?: string;
   body: string;
   cc?: string[];
@@ -30,7 +31,7 @@ export class EmailsService {
 
   async sendEmail(request: SendEmailRequest): Promise<EmailEntity> {
     const savedEmail = await this.emailsRepository.save({
-      from: config.smtp.from,
+      from: request.from || config.smtp.from,
       to: request.to,
       displayName: request.displayName || config.smtp.displayName,
       subject: request.subject,

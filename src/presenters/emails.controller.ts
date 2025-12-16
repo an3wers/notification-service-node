@@ -1,14 +1,13 @@
 import type { Request, Response, NextFunction } from "express";
-import type { EmailsService } from "../application/emails.servise.ts";
+import type { EmailsService } from "../application/emails.service.ts";
+import { SendEmailDtoSchema } from "../contracts/send-email.dto.ts";
 import {
-  normalizeSendEmailDto,
-  SendEmailDtoSchema,
-} from "../contracts/send-email.dto.ts";
-import {
+  BadRequestError,
   NotFoundError,
   ValidationError,
 } from "../presenters/errors/app-error.ts";
 import { config } from "../config/env.ts";
+import { normalizeSendEmailDto } from "../contracts/normalize-dto.ts";
 
 export class EmailsController {
   private readonly emailService: EmailsService;
@@ -45,6 +44,10 @@ export class EmailsController {
         ...normalized,
         attachments,
       });
+
+      if (result.status === "FAILED") {
+        throw new BadRequestError(result.error || "Failed to send email");
+      }
 
       res.status(201).json({
         data: {

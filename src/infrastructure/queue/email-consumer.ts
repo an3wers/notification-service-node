@@ -1,10 +1,8 @@
-import type { EmailsService } from "../../application/emails.servise.ts";
+import type { EmailsService } from "../../application/emails.service.ts";
 import type { QueueService } from "../../application/interfaces/queue-service.ts";
 import { config } from "../../config/env.ts";
-import {
-  normalizeSendEmailDto,
-  SendEmailDtoSchema,
-} from "../../contracts/send-email.dto.ts";
+import { normalizeSendEmailDto } from "../../contracts/normalize-dto.ts";
+import { SendEmailDtoSchema } from "../../contracts/send-email.dto.ts";
 
 export class EmailConsumer {
   private readonly queueService: QueueService;
