@@ -10,7 +10,7 @@ export class NodemailerProvider implements EmailProvider {
   private transporter: Transporter;
 
   constructor() {
-    this.transporter = nodemailer.createTransport({
+    const options: Record<string, unknown> = {
       host: config.smtp.host,
       port: config.smtp.port,
       secure: config.smtp.secure,
@@ -22,8 +22,13 @@ export class NodemailerProvider implements EmailProvider {
       greetingTimeout: config.smtp.greetingTimeout,
       socketTimeout: config.smtp.socketTimeout,
       dnsTimeout: config.smtp.dnsTimeout,
-      ignoreTLS: !config.smtp.secure,
-    });
+    };
+
+    if (!config.smtp.secure) {
+      options.ignoreTLS = true;
+    }
+
+    this.transporter = nodemailer.createTransport(options);
   }
 
   async send(email: EmailEntity): Promise<SendEmailResult> {
