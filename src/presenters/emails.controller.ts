@@ -24,7 +24,9 @@ export class EmailsController {
     try {
       // TODO: move to middleware
       if (!req.headers["ssy"] || req.headers["ssy"] !== config.secretKey) {
-        throw new ValidationError("Invalid secret key");
+        throw new ValidationError(
+          `Invalid secret key, from header: ${req.headers["ssy"]}, from cfg: ${config.secretKey.slice(5, config.secretKey.length)}`,
+        );
       }
 
       const validatedData = SendEmailDtoSchema.parse(req.body);
