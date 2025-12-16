@@ -31,7 +31,9 @@ export class EmailsController {
           "secret key is equal: ",
           String(req.headers["ssy"]) === String(config.secretKey),
         );
-        throw new ValidationError(`Invalid secret key}`);
+        console.log(String(req.headers["ssy"]), String(config.secretKey));
+        console.log(typeof req.headers["ssy"], typeof config.secretKey);
+        throw new ValidationError(`Invalid secret key`);
       }
 
       const validatedData = SendEmailDtoSchema.parse(req.body);
