@@ -3,6 +3,7 @@ version: "3.9"
 services:
   notification-db:
     image: postgres:16
+    container_name: notification-db
     environment:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
@@ -16,6 +17,7 @@ services:
     restart: unless-stopped
 
   notification-server:
+    container_name: notification-server
     build:
       context: .
       dockerfile: Dockerfile
