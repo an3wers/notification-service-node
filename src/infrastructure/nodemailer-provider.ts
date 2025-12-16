@@ -18,19 +18,19 @@ export class NodemailerProvider implements EmailProvider {
         user: config.smtp.auth.user,
         pass: config.smtp.auth.pass,
       },
-      tls: {
-        rejectUnauthorized: true,
-        minVersion: "TLSv1.2",
-      },
+      // tls: {
+      //   rejectUnauthorized: true,
+      //   minVersion: "TLSv1.2",
+      // },
       connectionTimeout: config.smtp.connectionTimeout,
       greetingTimeout: config.smtp.greetingTimeout,
       socketTimeout: config.smtp.socketTimeout,
       dnsTimeout: config.smtp.dnsTimeout,
     };
 
-    if (!config.smtp.secure) {
-      options.ignoreTLS = true;
-    }
+    // if (!config.smtp.secure) {
+    //   options.ignoreTLS = true;
+    // }
 
     this.transporter = nodemailer.createTransport(options);
   }
