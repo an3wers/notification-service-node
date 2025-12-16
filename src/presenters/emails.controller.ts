@@ -23,10 +23,15 @@ export class EmailsController {
   ): Promise<void> {
     try {
       // TODO: move to middleware
-      if (!req.headers["ssy"] || req.headers["ssy"] !== config.secretKey) {
-        throw new ValidationError(
-          `Invalid secret key, from header: ${req.headers["ssy"]}, from cfg: ${config.secretKey.slice(5, config.secretKey.length)}`,
+      if (
+        !req.headers["ssy"] ||
+        String(req.headers["ssy"]) !== String(config.secretKey)
+      ) {
+        console.error(
+          "secret key is equal: ",
+          String(req.headers["ssy"]) === String(config.secretKey),
         );
+        throw new ValidationError(`Invalid secret key}`);
       }
 
       const validatedData = SendEmailDtoSchema.parse(req.body);
