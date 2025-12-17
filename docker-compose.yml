@@ -15,4 +15,11 @@ services:
     volumes:
       - ./uploads:/app/uploads
     restart: unless-stopped
+    networks:
+      - notification_net
+
+networks:
+  notification_net:
+    external: true
+    name: notification_net
 
