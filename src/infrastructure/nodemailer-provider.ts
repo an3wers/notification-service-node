@@ -18,6 +18,7 @@ export class NodemailerProvider implements EmailProvider {
         user: config.smtp.auth.user,
         pass: config.smtp.auth.pass,
       },
+      authMethod: "LOGIN",
       // tls: {
       //   rejectUnauthorized: true,
       //   minVersion: "TLSv1.2",
