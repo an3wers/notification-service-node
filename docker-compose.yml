@@ -10,8 +10,6 @@ services:
       - "3008:3008"
     env_file:
       - ./.env
-    depends_on:
-      - notification-db
     volumes:
       - ./uploads:/app/uploads
     restart: unless-stopped
