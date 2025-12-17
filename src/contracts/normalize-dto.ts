@@ -19,12 +19,28 @@ export function normalizeSendEmailDto(dto: SendEmailDto): {
     toValue.push(...splited);
   }
 
+  const ccValue = [];
+  if (Array.isArray(dto.cc)) {
+    ccValue.push(...dto.cc);
+  } else if (typeof dto.cc === "string") {
+    const splited = dto.cc.split(";");
+    ccValue.push(...splited);
+  }
+
+  const bccValue = [];
+  if (Array.isArray(dto.bcc)) {
+    bccValue.push(...dto.bcc);
+  } else if (typeof dto.bcc === "string") {
+    const splited = dto.bcc.split(";");
+    bccValue.push(...splited);
+  }
+
   return {
     to: toValue,
     displayName: dto.fromDisplayName,
     from: dto.fromEmail,
-    cc: dto.cc ? (Array.isArray(dto.cc) ? dto.cc : [dto.cc]) : [],
-    bcc: dto.bcc ? (Array.isArray(dto.bcc) ? dto.bcc : [dto.bcc]) : [],
+    cc: ccValue,
+    bcc: bccValue,
 
     subject: dto.subject ?? dto.title ?? "",
     body: dto.body ?? dto.message ?? "",

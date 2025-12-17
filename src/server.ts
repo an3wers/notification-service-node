@@ -31,7 +31,7 @@ try {
   db = new DatabasePool(createDatabaseConfig());
 
   // health check
-  app.get("/api/health", async (req, res) => {
+  app.get("/api/v2/health", async (req, res) => {
     res.status(200).json({
       status: "OK",
       timestamp: new Date().toISOString(),
@@ -47,7 +47,7 @@ try {
   const emailsService = new EmailsService(emailsRepository, emailProvider);
   const emailsController = new EmailsController(emailsService);
 
-  app.use("/api/v1/emails", new EmailRouter(emailsController).router);
+  app.use("/api/v2/emails", new EmailRouter(emailsController).router);
 
   // 404 handler
   app.use((req, res) => {

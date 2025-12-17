@@ -28,9 +28,9 @@ export class NodemailerProvider implements EmailProvider {
       dnsTimeout: config.smtp.dnsTimeout,
     };
 
-    // if (!config.smtp.secure) {
-    //   options.ignoreTLS = true;
-    // }
+    if (!config.smtp.secure) {
+      options.ignoreTLS = true;
+    }
 
     this.transporter = nodemailer.createTransport(options);
   }
