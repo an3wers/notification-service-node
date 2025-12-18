@@ -14,6 +14,8 @@ import { EmailsService } from "./application/emails.service.ts";
 // import { EmailConsumer } from "./infrastructure/queue/email-consumer.ts";
 
 let db: DatabasePool;
+let emailProvider: NodemailerProvider;
+
 const app: Express = express();
 
 try {
@@ -43,7 +45,20 @@ try {
 
   // dependencies
   const emailsRepository = new EmailsSqlRepository(db);
-  const emailProvider = new NodemailerProvider();
+
+  // Создает транспорт и подключается к почтовому сервису
+  emailProvider = new NodemailerProvider();
+
+  emailProvider.transporterInstance.verify((err, success) => {
+    if (err) {
+      console.error("Nodemailer connection error:", err);
+    }
+
+    if (success) {
+      console.log("Nodemailer is ready to send emails");
+    }
+  });
+
   const emailsService = new EmailsService(emailsRepository, emailProvider);
   const emailsController = new EmailsController(emailsService);
 
@@ -73,12 +88,14 @@ try {
 process.on("SIGTERM", async () => {
   console.log("SIGTERM received, closing database connection...");
   await db.close();
+  emailProvider.transporterInstance.close();
   process.exit(0);
 });
 
 process.on("SIGINT", async () => {
   console.log("SIGINT received, closing database connection...");
   await db.close();
+  emailProvider.transporterInstance.close();
   process.exit(0);
 });
 

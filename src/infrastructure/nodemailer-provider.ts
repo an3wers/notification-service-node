@@ -19,12 +19,11 @@ export class NodemailerProvider implements EmailProvider {
         pass: config.smtp.auth.pass,
       },
       tls: {
-        rejectUnauthorized: false,
+        rejectUnauthorized: true,
       },
-      connectionTimeout: config.smtp.connectionTimeout,
-      greetingTimeout: config.smtp.greetingTimeout,
-      socketTimeout: config.smtp.socketTimeout,
-      dnsTimeout: config.smtp.dnsTimeout,
+      connectionTimeout: config.smtp.connectionTimeout, // Таймаут установки TCP-соединения, 15 sec recommended
+      greetingTimeout: config.smtp.greetingTimeout, // Таймаут ожидания приветственного сообщения SMTP, 15 sec recommended
+      socketTimeout: config.smtp.socketTimeout, // Таймаут соединения, 120 sec recommended
     };
 
     this.transporter = nodemailer.createTransport(options);
@@ -58,5 +57,9 @@ export class NodemailerProvider implements EmailProvider {
         error: error instanceof Error ? error.message : "Unknown error",
       };
     }
+  }
+
+  get transporterInstance() {
+    return this.transporter;
   }
 }
