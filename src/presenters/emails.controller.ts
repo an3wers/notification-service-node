@@ -30,8 +30,14 @@ export class EmailsController {
       const validatedData = SendEmailDtoSchema.parse(req.body);
       const normalized = normalizeSendEmailDto(validatedData);
 
+      if (req.files && !Array.isArray(req.files)) {
+        throw new ValidationError("Invalid file format");
+      }
+
+      const files = req.files as Express.Multer.File[] | undefined;
+
       const attachments =
-        (req.files as Express.Multer.File[])?.map((file) => ({
+        files?.map((file) => ({
           filename: file.filename,
           originalName: file.originalname,
           mimetype: file.mimetype,
@@ -39,6 +45,10 @@ export class EmailsController {
           path: file.path,
           url: null,
         })) || [];
+
+      if (attachments.length > 30) {
+        throw new ValidationError("Maximum 30 attachments allowed");
+      }
 
       const result = await this.emailService.sendEmail({
         ...normalized,
@@ -98,4 +108,11 @@ export class EmailsController {
       next(error);
     }
   }
+}
+
+// Type Guard for attachments
+function isFileArray(files: unknown): files is Express.Multer.File[] {
+  return (
+    Array.isArray(files) && files.every((file) => typeof file === "object")
+  );
 }

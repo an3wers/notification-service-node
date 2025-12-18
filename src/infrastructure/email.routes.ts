@@ -1,8 +1,5 @@
 import { Router } from "express";
 import { EmailsController } from "../presenters/emails.controller.ts";
-import { EmailsService } from "../application/emails.service.ts";
-import type { EmailsRepository } from "../application/interfaces/emails-repository.ts";
-import type { EmailProvider } from "../application/interfaces/email-provider.ts";
 import { upload } from "../config/multer.config.ts";
 
 export class EmailRouter {
@@ -17,7 +14,7 @@ export class EmailRouter {
   get router() {
     this._router.post(
       "/",
-      upload.array("files", 20),
+      upload.array("files", 30),
       this.emailsController.sendEmail.bind(this.emailsController),
     );
 

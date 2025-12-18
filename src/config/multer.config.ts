@@ -13,6 +13,7 @@ const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, config.storage.uploadDir);
   },
+  // TODO: add validation for file name
   filename: (req, file, cb) => {
     const uniqueName = `${uuidv4()}${path.extname(file.originalname)}`;
     cb(null, uniqueName);
