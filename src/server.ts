@@ -55,7 +55,10 @@ try {
     }
 
     if (success) {
-      console.log("Nodemailer is ready to send emails");
+      console.log(
+        "Nodemailer is ready to send emails on port",
+        config.smtp.port,
+      );
     }
   });
 

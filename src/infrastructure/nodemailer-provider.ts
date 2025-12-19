@@ -19,8 +19,8 @@ export class NodemailerProvider implements EmailProvider {
       tls: {
         rejectUnauthorized: true,
       },
-      pool: true,
-      maxConnections: 1,
+      pool: false,
+      // maxConnections: 1,
       connectionTimeout: config.smtp.connectionTimeout, // Таймаут установки TCP-соединения, 15 sec recommended
       greetingTimeout: config.smtp.greetingTimeout, // Таймаут ожидания приветственного сообщения SMTP, 15 sec recommended
       socketTimeout: config.smtp.socketTimeout, // Таймаут соединения, 120 sec recommended
