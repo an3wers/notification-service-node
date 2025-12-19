@@ -16,10 +16,10 @@ export class NodemailerProvider implements EmailProvider {
       host: config.smtp.host,
       port: port,
       secure: config.smtp.secure,
-      tls: {
-        rejectUnauthorized: true,
-      },
-      pool: false,
+      // tls: {
+      //   rejectUnauthorized: true,
+      // },
+      // pool: false,
       // maxConnections: 1,
       connectionTimeout: config.smtp.connectionTimeout, // Таймаут установки TCP-соединения, 15 sec recommended
       greetingTimeout: config.smtp.greetingTimeout, // Таймаут ожидания приветственного сообщения SMTP, 15 sec recommended
