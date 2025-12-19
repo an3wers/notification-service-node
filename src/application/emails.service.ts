@@ -4,6 +4,7 @@ import { config } from "../config/env.ts";
 import { EmailStatus } from "../domain/types.ts";
 import type { EmailProvider } from "./interfaces/email-provider.ts";
 import type { EmailEntity } from "../domain/email.entity.ts";
+import { StorageService } from "./storage.service.ts";
 
 export interface SendEmailRequest {
   to: string[];
@@ -20,6 +21,7 @@ export interface SendEmailRequest {
 export class EmailsService {
   private readonly emailsRepository: EmailsRepository;
   private readonly emailProvider: EmailProvider;
+  private readonly storageService: StorageService;
 
   constructor(
     emailsRepository: EmailsRepository,
@@ -27,9 +29,10 @@ export class EmailsService {
   ) {
     this.emailsRepository = emailsRepository;
     this.emailProvider = emailProvider;
+    this.storageService = new StorageService(); // no DI because it's a simple service
   }
 
-  async sendEmail(request: SendEmailRequest): Promise<EmailEntity> {
+  async sendEmail(request: SendEmailRequest): Promise<EmailEntity | null> {
     const savedEmail = await this.emailsRepository.save({
       from: request.from || config.smtp.from,
       to: request.to,
@@ -54,6 +57,11 @@ export class EmailsService {
           status: EmailStatus.SENT,
           sentAt: new Date(),
         });
+
+        if (!sentEmail) {
+          throw new Error("Failed to update email status");
+        }
+
         return sentEmail;
       } else {
         const failedEmail = this.emailsRepository.update({
@@ -61,6 +69,11 @@ export class EmailsService {
           status: EmailStatus.FAILED,
           error: result.error || "Unknown error",
         });
+
+        if (!failedEmail) {
+          throw new Error("Failed to update email status");
+        }
+
         return failedEmail;
       }
     } catch (error) {
@@ -73,6 +86,10 @@ export class EmailsService {
         error: errorMessage,
       });
 
+      if (!failedEmail) {
+        throw new Error("Failed to update email status");
+      }
+
       return failedEmail;
     }
   }
@@ -80,5 +97,41 @@ export class EmailsService {
   async getEmailDetails(emailId: string): Promise<EmailEntity | null> {
     return this.emailsRepository.findById(emailId);
   }
-  // TODO: getEmails() {}
+  // TODO: getEmails
+
+  async deleteEmailSoft(emailId: string): Promise<EmailEntity | null> {
+    try {
+      const deletedEmail = await this.emailsRepository.deleteSoft(emailId);
+
+      if (!deletedEmail) {
+        return null;
+      }
+
+      if (deletedEmail && deletedEmail.attachments.length > 0) {
+        const deletePromises = deletedEmail.attachments.map((attachment) =>
+          this.storageService.deleteAttachment(attachment),
+        );
+
+        const results = await Promise.allSettled(deletePromises);
+
+        results.forEach((result, index) => {
+          if (result.status === "rejected") {
+            console.error(
+              `Failed to delete attachment ${deletedEmail.attachments[index].filename}:`,
+              result.reason,
+            );
+          }
+        });
+      }
+
+      return deletedEmail;
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
+
+      console.error(errorMessage);
+
+      throw new Error(errorMessage);
+    }
+  }
 }

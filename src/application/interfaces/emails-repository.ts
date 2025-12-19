@@ -4,7 +4,9 @@ import type { UpdateEmailData } from "../types/update-email-data.ts";
 
 export interface EmailsRepository {
   save(data: SaveEmailData): Promise<EmailEntity>;
+
   findById(id: string): Promise<EmailEntity | null>;
+
   findAll(): Promise<{
     emails: EmailEntity[];
     count: number;
@@ -12,6 +14,10 @@ export interface EmailsRepository {
     limit: number;
     total: number;
   }>;
-  update(data: UpdateEmailData): Promise<EmailEntity>;
-  // TODO: add delete method
+
+  update(data: UpdateEmailData): Promise<EmailEntity | null>;
+
+  deleteSoft(id: string): Promise<EmailEntity | null>;
+
+  deleteHard(id: string): Promise<void>;
 }

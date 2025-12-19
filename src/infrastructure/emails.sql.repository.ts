@@ -184,6 +184,44 @@ export class EmailsSqlRepository
     throw new Error("Method not implemented.");
   }
 
+  async deleteSoft(id: string): Promise<EmailEntity | null> {
+    // TODO: use transaction
+    const emailResult = await this.query<EmailRow>(
+      `UPDATE "emails" SET "deleted_at" = NOW(), "updated_at" = NOW()
+       WHERE "id" = $1 AND "deleted_at" IS NULL
+       RETURNING *`,
+      [id],
+    );
+
+    const emailRow = emailResult.rows[0];
+
+    if (!emailRow) {
+      return null;
+    }
+
+    const attachmentsResult = await this.query<AttachmentRow>(
+      `SELECT *
+       FROM "attachments" 
+       WHERE "email_id" = $1`,
+      [id],
+    );
+
+    const attachments = attachmentsResult.rows.map((row) =>
+      this.mapRowToAttachment(row),
+    );
+
+    return this.mapRowToEmail(emailRow, attachments);
+  }
+
+  async deleteHard(id: string): Promise<void> {
+    await this.transaction(async (client: PoolClient) => {
+      await client.query(`DELETE FROM "attachments" WHERE "email_id" = $1`, [
+        id,
+      ]);
+      await client.query(`DELETE FROM "emails" WHERE "id" = $1`, [id]);
+    });
+  }
+
   private mapRowToEmail(
     emailRow: EmailRow,
     attachments: AttachmentEntity[],

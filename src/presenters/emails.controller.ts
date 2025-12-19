@@ -55,8 +55,8 @@ export class EmailsController {
         attachments,
       });
 
-      if (result.status === "FAILED") {
-        throw new BadRequestError(result.error || "Failed to send email");
+      if (!result || result.status === "FAILED") {
+        throw new BadRequestError(result?.error || "Failed to send email");
       }
 
       res.status(201).json({
@@ -108,11 +108,30 @@ export class EmailsController {
       next(error);
     }
   }
-}
 
-// Type Guard for attachments
-function isFileArray(files: unknown): files is Express.Multer.File[] {
-  return (
-    Array.isArray(files) && files.every((file) => typeof file === "object")
-  );
+  async deleteEmail(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      const { id } = req.params;
+      const deletedEmail = await this.emailService.deleteEmailSoft(id);
+
+      if (!deletedEmail) {
+        throw new NotFoundError("Email not found");
+      }
+
+      res.json({
+        data: {
+          id: deletedEmail.id,
+        },
+        success: true,
+        message: "Email deleted successfully",
+        error: null,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
