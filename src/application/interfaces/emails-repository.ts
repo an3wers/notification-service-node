@@ -20,4 +20,6 @@ export interface EmailsRepository {
   deleteSoft(id: string): Promise<EmailEntity | null>;
 
   deleteHard(id: string): Promise<void>;
+
+  getEmailsIdOlderThan(days: number): Promise<string[]>;
 }

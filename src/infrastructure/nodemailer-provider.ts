@@ -21,6 +21,20 @@ export class NodemailerProvider implements EmailProvider {
       socketTimeout: config.smtp.socketTimeout, // Таймаут соединения, 120 sec recommended
     };
 
+    if (port !== 25) {
+      options.auth = {
+        user: config.smtp.auth.user,
+        pass: config.smtp.auth.pass,
+      };
+    } else {
+      // specific options for 25 port
+      options.ignoreTLS = true;
+      options.secure = false;
+      options.tls = {
+        rejectUnauthorized: false,
+      };
+    }
+
     this.transporter = nodemailer.createTransport(options);
   }
 

@@ -134,4 +134,16 @@ export class EmailsService {
       throw new Error(errorMessage);
     }
   }
+
+  async deleteEmailHard(emailId: string): Promise<void> {
+    try {
+      await this.emailsRepository.deleteHard(emailId);
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
+
+      console.error(errorMessage);
+      throw new Error(errorMessage);
+    }
+  }
 }

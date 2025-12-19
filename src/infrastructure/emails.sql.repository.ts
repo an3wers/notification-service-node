@@ -222,6 +222,43 @@ export class EmailsSqlRepository
     });
   }
 
+  async getEmailsIdOlderThan(days: number): Promise<string[]> {
+    const emailsResult = await this.query<EmailRow>(
+      `SELECT * FROM "emails" WHERE "created_at" < NOW() - INTERVAL '${days} days'`,
+    );
+
+    const emails = emailsResult.rows;
+
+    if (emails.length === 0) {
+      return [];
+    }
+
+    // Получаем все id писем, чтобы достать их вложения пачкой
+    const emailIds = emails.map((row) => row.id);
+
+    return emailIds;
+
+    // let attachmentsByEmailId: Record<string, AttachmentEntity[]> = {};
+
+    // if (emailIds.length > 0) {
+    //   const attachmentsResult = await this.query<AttachmentRow>(
+    //     `SELECT * FROM "attachments" WHERE "email_id" = ANY($1)`,
+    //     [emailIds]
+    //   );
+
+    //   attachmentsByEmailId = attachmentsResult.rows.reduce<Record<string, AttachmentEntity[]>>((acc, row) => {
+    //     const mapped = this.mapRowToAttachment(row);
+    //     if (!acc[row.email_id]) acc[row.email_id] = [];
+    //     acc[row.email_id].push(mapped);
+    //     return acc;
+    //   }, {});
+    // }
+
+    // return emails.map(emailRow =>
+    //   this.mapRowToEmail(emailRow, attachmentsByEmailId[emailRow.id] || [])
+    // );
+  }
+
   private mapRowToEmail(
     emailRow: EmailRow,
     attachments: AttachmentEntity[],

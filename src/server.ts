@@ -10,11 +10,15 @@ import { EmailsSqlRepository } from "./infrastructure/emails.sql.repository.ts";
 import { NodemailerProvider } from "./infrastructure/nodemailer-provider.ts";
 import { EmailsController } from "./presenters/emails.controller.ts";
 import { EmailsService } from "./application/emails.service.ts";
+import { Scheduler } from "./infrastructure/scheduler.ts";
+import { EmailCleanupJob } from "./infrastructure/jobs/email-cleanup.ts";
+
 // import { RabbitMQService } from "./infrastructure/queue/rabbitmq.service.ts";
 // import { EmailConsumer } from "./infrastructure/queue/email-consumer.ts";
 
 let db: DatabasePool;
 let emailProvider: NodemailerProvider;
+let scheduler: Scheduler;
 
 const app: Express = express();
 
@@ -83,6 +87,12 @@ try {
 
   // const emailConsumer = new EmailConsumer(queueService, emailsService);
   // await emailConsumer.start();
+
+  // Scheduler
+  scheduler = new Scheduler(
+    new EmailCleanupJob(emailsRepository, emailsService),
+  );
+  scheduler.initializeCronJobs();
 } catch (error) {
   console.error(error);
   throw error;
@@ -92,6 +102,7 @@ process.on("SIGTERM", async () => {
   console.log("SIGTERM received, closing database connection...");
   await db.close();
   emailProvider.transporterInstance.close();
+  scheduler.stopAll();
   process.exit(0);
 });
 
@@ -99,6 +110,7 @@ process.on("SIGINT", async () => {
   console.log("SIGINT received, closing database connection...");
   await db.close();
   emailProvider.transporterInstance.close();
+  scheduler.stopAll();
   process.exit(0);
 });
 
