@@ -34,6 +34,12 @@ export class NodemailerProvider implements EmailProvider {
         user: config.smtp.auth.user,
         pass: config.smtp.auth.pass,
       };
+
+      options.ignoreTLS = true;
+
+      options.tls = {
+        rejectUnauthorized: true,
+      };
     }
 
     this.transporter = nodemailer.createTransport(options);
