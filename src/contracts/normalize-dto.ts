@@ -11,7 +11,6 @@ export function normalizeSendEmailDto(dto: SendEmailDto): {
   html?: string;
 } {
   const toValue = [];
-
   if (Array.isArray(dto.to)) {
     toValue.push(...dto.to);
   } else if (typeof dto.to === "string") {
@@ -38,7 +37,7 @@ export function normalizeSendEmailDto(dto: SendEmailDto): {
   return {
     to: toValue,
     displayName: dto.fromDisplayName,
-    from: dto.fromEmail,
+    from: dto.fromEmail ?? dto.from,
     cc: ccValue,
     bcc: bccValue,
 

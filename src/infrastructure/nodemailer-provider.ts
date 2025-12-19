@@ -10,21 +10,31 @@ export class NodemailerProvider implements EmailProvider {
   private transporter: Transporter;
 
   constructor() {
+    const port = config.smtp.port;
+
     const options: Record<string, unknown> = {
       host: config.smtp.host,
-      port: config.smtp.port,
+      port: port,
       secure: config.smtp.secure,
-      auth: {
-        user: config.smtp.auth.user,
-        pass: config.smtp.auth.pass,
-      },
       tls: {
         rejectUnauthorized: true,
       },
+      pool: true,
+      maxConnections: 1,
       connectionTimeout: config.smtp.connectionTimeout, // Таймаут установки TCP-соединения, 15 sec recommended
       greetingTimeout: config.smtp.greetingTimeout, // Таймаут ожидания приветственного сообщения SMTP, 15 sec recommended
       socketTimeout: config.smtp.socketTimeout, // Таймаут соединения, 120 sec recommended
     };
+
+    if (port === 25) {
+      options.secure = false;
+      options.ignoreTLS = true;
+    } else if (port === 587) {
+      options.auth = {
+        user: config.smtp.auth.user,
+        pass: config.smtp.auth.pass,
+      };
+    }
 
     this.transporter = nodemailer.createTransport(options);
   }

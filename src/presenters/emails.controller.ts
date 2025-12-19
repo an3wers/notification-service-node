@@ -27,8 +27,8 @@ export class EmailsController {
         throw new ValidationError(`Invalid secret key`);
       }
 
-      const validatedData = SendEmailDtoSchema.parse(req.body);
-      const normalized = normalizeSendEmailDto(validatedData);
+      const validated = SendEmailDtoSchema.parse(req.body);
+      const normalized = normalizeSendEmailDto(validated);
 
       if (req.files && !Array.isArray(req.files)) {
         throw new ValidationError("Invalid file format");
