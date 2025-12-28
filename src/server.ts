@@ -13,8 +13,8 @@ import { EmailsService } from "./application/emails.service.ts";
 import { Scheduler } from "./infrastructure/scheduler.ts";
 import { EmailCleanupJob } from "./infrastructure/jobs/email-cleanup.ts";
 
-// import { RabbitMQService } from "./infrastructure/queue/rabbitmq.service.ts";
-// import { EmailConsumer } from "./infrastructure/queue/email-consumer.ts";
+import { RabbitMQService } from "./infrastructure/queue/rabbitmq.service.ts";
+import { EmailConsumer } from "./infrastructure/queue/email-consumer.ts";
 
 let db: DatabasePool;
 let emailProvider: NodemailerProvider;
@@ -82,11 +82,11 @@ try {
   app.use(errorHandler);
 
   // RabbitMQ Consumer
-  // const queueService = new RabbitMQService();
-  // await queueService.connect();
+  const queueService = new RabbitMQService();
+  await queueService.connect();
 
-  // const emailConsumer = new EmailConsumer(queueService, emailsService);
-  // await emailConsumer.start();
+  const emailConsumer = new EmailConsumer(queueService, emailsService);
+  await emailConsumer.start();
 
   // Scheduler
   scheduler = new Scheduler(

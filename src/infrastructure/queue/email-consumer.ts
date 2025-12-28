@@ -14,15 +14,16 @@ export class EmailConsumer {
   }
 
   async start(): Promise<void> {
+    // TODO: Добавить контракт для message.
     await this.queueService.consume(config.rabbitmq.queue, async (message) => {
       console.log("Received email from queue:", message);
 
       try {
-        const validatedData = SendEmailDtoSchema.parse(message);
-        const normalized = normalizeSendEmailDto(validatedData);
-
-        const result = await this.emailService.sendEmail(normalized);
-        console.log(`Email sent successfully: ${result.id}`);
+        // const validatedData = SendEmailDtoSchema.parse(message);
+        // const normalized = normalizeSendEmailDto(validatedData);
+        // TODO: Обработать сценарий, со структурой файлов.
+        // const result = await this.emailService.sendEmail(normalized);
+        // console.log(`Email sent successfully: ${result?.id} ?? 'Unknown'`);
       } catch (error) {
         console.error("Failed to send email from queue:", error);
         throw error;

@@ -31,7 +31,7 @@ export class NodemailerProvider implements EmailProvider {
       options.ignoreTLS = true;
       options.secure = false;
       options.tls = {
-        rejectUnauthorized: false,
+        rejectUnauthorized: true,
       };
     }
 
@@ -48,6 +48,8 @@ export class NodemailerProvider implements EmailProvider {
         subject: email.subject,
         text: email.body,
         html: email.html || undefined,
+        // TODO: Обработать сценарий, когда у attachments есть url, то нужно использовать url, а не path
+        // такой сценарий может быть, когда мы отправляем письмо через RabbitMQ и вложения уже загружены на сторонний сервис, другим сервисом
         attachments: email.attachments?.map((att) => ({
           filename: att.originalName,
           path: att.path,

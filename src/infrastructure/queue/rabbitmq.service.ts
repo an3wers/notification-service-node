@@ -39,7 +39,16 @@ export class RabbitMQService implements QueueService {
     }
 
     const messageBuffer = Buffer.from(JSON.stringify(message));
-    this.channel.sendToQueue(queue, messageBuffer, { persistent: true });
+
+    // publish to queue
+    // this.channel.sendToQueue(queue, messageBuffer, { persistent: true });
+
+    this.channel.publish(
+      config.rabbitmq.exchange,
+      config.rabbitmq.routingKey,
+      messageBuffer,
+      { persistent: true },
+    );
   }
 
   async consume(

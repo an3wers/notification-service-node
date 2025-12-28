@@ -79,7 +79,7 @@ export class EmailsSqlRepository
               attachment.mimetype,
               attachment.size,
               attachment.path,
-              attachment.url || null,
+              attachment.url,
             ],
           );
 
