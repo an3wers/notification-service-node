@@ -22,11 +22,6 @@ export class EmailsController {
     next: NextFunction,
   ): Promise<void> {
     try {
-      // TODO: move to middleware
-      if (!req.headers["ssy"] || req.headers["ssy"] !== config.secretKey) {
-        throw new ValidationError(`Invalid secret key`);
-      }
-
       const validated = SendEmailDtoSchema.parse(req.body);
       const normalized = normalizeSendEmailDto(validated);
 

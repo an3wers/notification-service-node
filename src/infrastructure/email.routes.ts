@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { EmailsController } from "../presenters/emails.controller.ts";
 import { upload } from "../config/multer.config.ts";
+import { checkSecretKey } from "../presenters/middleware/check-secret-key.middleware.ts";
 
 export class EmailRouter {
   private _router: Router;
@@ -14,12 +15,14 @@ export class EmailRouter {
   get router() {
     this._router.post(
       "/",
+      checkSecretKey,
       upload.array("files", 30),
       this.emailsController.sendEmail.bind(this.emailsController),
     );
 
     this._router.get(
       "/:id",
+      checkSecretKey,
       this.emailsController.getEmailDetails.bind(this.emailsController),
     );
 
